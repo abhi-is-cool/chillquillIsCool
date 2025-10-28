@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: https://apis.google.com https://accounts.google.com https://www.gstatic.com https://ssl.gstatic.com https://cdn.jsdelivr.net https://clerk.chillquill.abhidonepudi.com; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' blob: data: https://apis.google.com https://accounts.google.com https://www.gstatic.com https://ssl.gstatic.com https://cdn.jsdelivr.net https://clerk.chillquill.abhidonepudi.com; connect-src 'self' https://openrouter.ai https://apis.google.com https://accounts.google.com https://www.googleapis.com https://content.googleapis.com https://clerk.chillquill.abhidonepudi.com https://tfhub.dev https://storage.googleapis.com https://fonts.googleapis.com https://www.kaggle.com https://www.gstatic.com https://ssl.gstatic.com; worker-src 'self' blob: data:; frame-src 'self' https://accounts.google.com https://content.googleapis.com https://www.gstatic.com https://ssl.gstatic.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: https://www.google.com https://www.gstatic.com https://ssl.gstatic.com;">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="unsafe-none">
+    <title>Notes</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="icon" type="image/png" sizes="32x32" href="./images/chillian_brown.png">
+</script>
+    <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_live_Y2xlcmsuY2hpbGxxdWlsbC5hYmhpZG9uZXB1ZGkuY29tJA"
+    src="https://clerk.chillquill.abhidonepudi.com/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript">
+    </script>
+</head>
+<body>
+    <div class="app-layout">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <h2>folders</h2>
+                </div>
+                <button id="addFolderBtn" class="add-folder-btn">+</button>
+            </div>
+            <div class="folder-list" id="folderList">
+                <div class="folder-item active" data-folder="all">
+                    <span class="folder-icon custom-folder-icon"></span>
+                    <span class="folder-name">all notes</span>
+                    <span class="note-count" id="allCount">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <header>
+                <div class="header-logo">
+                    <img src="images/chillian_brown.png" alt="Chillian the Hedgehog" class="logo-chillian" id="chillianMascot">
+                    <h1 id="currentFolderTitle">chillquill</h1>
+                </div>
+                <div class="header-actions">
+                    <button id="addNoteBtn" class="add-btn">+ quill something</button>
+                    <button id="aiAssistBtn" class="ai-btn">ask chillian</button>
+                    <button id="settingsBtn" class="settings-btn">settings</button>
+                    <button id="signOutBtn" class="sign-out-btn" style="display: none;">sign out</button>
+                </div>
+            </header>
+            
+            <div class="notes-container" id="notesContainer">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Folder Modal -->
+    <div class="modal" id="folderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="folderModalTitle">create new folder</h3>
+                <span class="close" id="closeFolderModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="folderName" placeholder="what shall we call this chill folder?" class="folder-name-input">
+                <div class="modal-actions">
+                    <button id="saveFolderBtn" class="save-btn">create folder</button>
+                    <button id="cancelFolderBtn" class="cancel-btn">nah, escape</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <!-- Note Modal -->
+    <div class="modal" id="noteModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Add New Note</h3>
+                    <span class="close" id="closeModal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="noteTitle" placeholder="what's brewing in your mind?">
+                    <select id="noteFolder" class="folder-select">
+                        <option value="">choose a folder...</option>
+                    </select>
+                    
+                    <div class="editor-container">
+                        <!-- Single consolidated toolbar - sticky at top -->
+                        <div class="formatting-toolbar sticky-toolbar" id="mainFormattingToolbar">
+                            <div class="toolbar-group">
+                                <select id="inlineFont" class="inline-font-select">
+                                    <optgroup label="Current Fonts">
+                                        <option value="">Default</option>
+                                        <option value="Space Grotesk">Space Grotesk</option>
+                                        <option value="JetBrains Mono">JetBrains Mono</option>
+                                    </optgroup>
+                                    <optgroup label="Sans-Serif">
+                                        <option value="Inter">Inter</option>
+                                        <option value="Roboto">Roboto</option>
+                                        <option value="Open Sans">Open Sans</option>
+                                        <option value="Lato">Lato</option>
+                                        <option value="Montserrat">Montserrat</option>
+                                        <option value="Poppins">Poppins</option>
+                                        <option value="Nunito">Nunito</option>
+                                        <option value="Ubuntu">Ubuntu</option>
+                                        <option value="Raleway">Raleway</option>
+                                        <option value="Source Sans Pro">Source Sans Pro</option>
+                                    </optgroup>
+                                    <optgroup label="Serif">
+                                        <option value="Playfair Display">Playfair Display</option>
+                                        <option value="Merriweather">Merriweather</option>
+                                        <option value="Lora">Lora</option>
+                                        <option value="PT Serif">PT Serif</option>
+                                        <option value="Crimson Text">Crimson Text</option>
+                                        <option value="Libre Baskerville">Libre Baskerville</option>
+                                    </optgroup>
+                                    <optgroup label="Monospace">
+                                        <option value="Fira Code">Fira Code</option>
+                                        <option value="Source Code Pro">Source Code Pro</option>
+                                        <option value="Inconsolata">Inconsolata</option>
+                                        <option value="Roboto Mono">Roboto Mono</option>
+                                        <option value="JetBrains Mono">JetBrains Mono</option>
+                                    </optgroup>
+                                    <optgroup label="Display">
+                                        <option value="Lobster">Lobster</option>
+                                        <option value="Dancing Script">Dancing Script</option>
+                                        <option value="Pacifico">Pacifico</option>
+                                        <option value="Righteous">Righteous</option>
+                                        <option value="Fredoka One">Fredoka One</option>
+                                    </optgroup>
+                                    <optgroup label="System">
+                                        <option value="Arial">Arial</option>
+                                        <option value="Times New Roman">Times New Roman</option>
+                                        <option value="Georgia">Georgia</option>
+                                        <option value="Verdana">Verdana</option>
+                                        <option value="Courier New">Courier New</option>
+                                    </optgroup>
+                                </select>
+                                <button type="button" class="format-btn" data-command="bold" title="Bold">
+                                    <strong>B</strong>
+                                </button>
+                                <button type="button" class="format-btn" data-command="italic" title="Italic">
+                                    <em>I</em>
+                                </button>
+                                <button type="button" class="format-btn" data-command="underline" title="underline">
+                                    <u>U</u>
+                                </button>
+                                <button type="button" class="format-btn" data-command="insertUnorderedList" title="bullet list">
+                                    •
+                                </button>
+                            </div>
+
+                            <div class="toolbar-separator"></div>
+
+                            <div class="toolbar-group">
+                                <button type="button" class="format-btn" data-command="fontSize" data-value="decrease" title="decrease font size">
+                                    -
+                                </button>
+                                <select id="fontSizeSelect" class="font-size-select" title="font size">
+                                    <option value="12px">12px</option>
+                                    <option value="14px">14px</option>
+                                    <option value="16px" selected>16px</option>
+                                    <option value="18px">18px</option>
+                                    <option value="20px">20px</option>
+                                    <option value="24px">24px</option>
+                                    <option value="28px">28px</option>
+                                    <option value="32px">32px</option>
+                                </select>
+                                <button type="button" class="format-btn" data-command="fontSize" data-value="increase" title="increase font size">
+                                    +
+                                </button>
+                            </div>
+
+                            <div class="toolbar-separator"></div>
+
+                            <div class="toolbar-group">
+                                <button type="button" class="format-btn" data-command="hiliteColor" title="highlight">
+                                    H
+                                </button>
+                                <input type="color" id="highlightColor" class="color-picker" value="#ffeb3b" title="highlight color">
+
+                                <button type="button" class="format-btn" data-command="foreColor" title="font color">
+                                    A
+                                </button>
+                                <input type="color" id="fontColor" class="color-picker" value="#1a1a1a" title="font color">
+                            </div>
+
+                            <div class="toolbar-separator"></div>
+
+                            <div class="toolbar-group">
+                                <button type="button" class="format-btn" data-command="removeFormat" title="clear formatting">
+                                    clear
+                                </button>
+                            </div>
+                        </div>
+                            <div id="noteContent" class="rich-editor" contenteditable="true" placeholder="spill your thoughts here..."></div>
+                            <div class="editor-mascot">
+                                <img src="images/chillian_brown.png" alt="Chillian" class="editor-chillian" id="editorChillian">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <div class="ai-assist-actions">
+                            <button class="enhance-btn" id="enhanceNoteBtn">enhance with AI</button>
+                            <button class="quiz-btn" id="createQuizBtn">create quiz</button>
+                        </div>
+                        <div class="save-actions">
+                            <button id="saveNoteBtn" class="save-btn">save & chill</button>
+                            <button id="cancelBtn" class="cancel-btn">nah, escape</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chat Modal -->
+    <div class="modal" id="aiModal">
+        <div class="modal-content ai-modal-content">
+            <div class="modal-header">
+                <div class="ai-header">
+                    <img src="images/chillian_brown.png" alt="Chillian AI" class="ai-chillian">
+                    <h3 id="aiModalTitle">chat with chillian AI</h3>
+                </div>
+                <span class="close" id="closeAiModal">&times;</span>
+            </div>
+            <div class="modal-body ai-modal-body">
+                <div class="chat-container" id="chatContainer">
+                    <div class="ai-message">
+                        <img src="images/chillian_brown.png" alt="Chillian" class="message-avatar">
+                        <div class="message-content">
+                            <p>hey there! 👋 I'm chillian, your AI study buddy! I can help you:</p>
+                            <ul>
+                                <li>✨ enhance your notes with better structure and details</li>
+                                <li>📚 create quizzes from your notes</li>
+                                <li>🤔 answer questions about your content</li>
+                                <li>💡 suggest improvements and connections</li>
+                            </ul>
+                            <p>what would you like me to help with today?</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="chatInput" placeholder="ask chillian anything..." class="chat-input">
+                    <button id="clearChatBtn" class="clear-chat-btn" title="clear conversation">🗑️</button>
+                    <button id="sendChatBtn" class="send-btn">send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content settings-modal-content">
+            <div class="modal-header">
+                <h3>chillquill settings</h3>
+                <span class="close" id="closeSettingsModal">&times;</span>
+            </div>
+            <div class="modal-body settings-modal-body">
+                <div class="settings-section">
+                    <h4>appearance</h4>
+                    <div class="setting-group">
+                        <label for="themeSelect">color theme</label>
+                        <select id="themeSelect" class="setting-select">
+                            <option value="default">warm brown (default)</option>
+                            <option value="dark">dark mode</option>
+                            <option value="light">light mode</option>
+                            <option value="nature">forest green</option>
+                            <option value="ocean">ocean blue</option>
+                            <option value="sunset">sunset orange</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label for="fontSizeSlider">editor font size</label>
+                        <div class="slider-container">
+                            <input type="range" id="fontSizeSlider" min="12" max="24" value="16" class="setting-slider">
+                            <span id="fontSizeValue">16px</span>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <label for="fontFamilySelect">font family</label>
+                        <select id="fontFamilySelect" class="setting-select">
+                            <optgroup label="Current Fonts">
+                                <option value="Space Grotesk">Space Grotesk (default headers)</option>
+                                <option value="JetBrains Mono">JetBrains Mono (default content)</option>
+                            </optgroup>
+                            <optgroup label="Sans-Serif Fonts">
+                                <option value="Inter">Inter</option>
+                                <option value="Roboto">Roboto</option>
+                                <option value="Open Sans">Open Sans</option>
+                                <option value="Lato">Lato</option>
+                                <option value="Montserrat">Montserrat</option>
+                                <option value="Source Sans Pro">Source Sans Pro</option>
+                                <option value="Ubuntu">Ubuntu</option>
+                                <option value="Nunito">Nunito</option>
+                                <option value="Poppins">Poppins</option>
+                                <option value="Raleway">Raleway</option>
+                                <option value="Work Sans">Work Sans</option>
+                                <option value="Fira Sans">Fira Sans</option>
+                                <option value="Rubik">Rubik</option>
+                                <option value="Oxygen">Oxygen</option>
+                                <option value="Noto Sans">Noto Sans</option>
+                                <option value="PT Sans">PT Sans</option>
+                                <option value="Merriweather Sans">Merriweather Sans</option>
+                                <option value="Muli">Muli</option>
+                                <option value="Quicksand">Quicksand</option>
+                                <option value="Karla">Karla</option>
+                                <option value="Cabin">Cabin</option>
+                                <option value="Hind">Hind</option>
+                                <option value="Varela Round">Varela Round</option>
+                                <option value="Libre Franklin">Libre Franklin</option>
+                                <option value="IBM Plex Sans">IBM Plex Sans</option>
+                            </optgroup>
+                            <optgroup label="Serif Fonts">
+                                <option value="Playfair Display">Playfair Display</option>
+                                <option value="Merriweather">Merriweather</option>
+                                <option value="Lora">Lora</option>
+                                <option value="Crimson Text">Crimson Text</option>
+                                <option value="Libre Baskerville">Libre Baskerville</option>
+                                <option value="Source Serif Pro">Source Serif Pro</option>
+                                <option value="PT Serif">PT Serif</option>
+                                <option value="Cormorant Garamond">Cormorant Garamond</option>
+                                <option value="Vollkorn">Vollkorn</option>
+                                <option value="Cardo">Cardo</option>
+                                <option value="Gentium Basic">Gentium Basic</option>
+                                <option value="Crete Round">Crete Round</option>
+                                <option value="Neuton">Neuton</option>
+                                <option value="Bitter">Bitter</option>
+                                <option value="Alegreya">Alegreya</option>
+                                <option value="Crimson Pro">Crimson Pro</option>
+                                <option value="IBM Plex Serif">IBM Plex Serif</option>
+                                <option value="Spectral">Spectral</option>
+                                <option value="Domine">Domine</option>
+                                <option value="Zilla Slab">Zilla Slab</option>
+                            </optgroup>
+                            <optgroup label="Monospace Fonts">
+                                <option value="Fira Code">Fira Code</option>
+                                <option value="Source Code Pro">Source Code Pro</option>
+                                <option value="Roboto Mono">Roboto Mono</option>
+                                <option value="Ubuntu Mono">Ubuntu Mono</option>
+                                <option value="Inconsolata">Inconsolata</option>
+                                <option value="Space Mono">Space Mono</option>
+                                <option value="Anonymous Pro">Anonymous Pro</option>
+                                <option value="PT Mono">PT Mono</option>
+                                <option value="Cousine">Cousine</option>
+                                <option value="Droid Sans Mono">Droid Sans Mono</option>
+                                <option value="Noto Sans Mono">Noto Sans Mono</option>
+                                <option value="IBM Plex Mono">IBM Plex Mono</option>
+                                <option value="Overpass Mono">Overpass Mono</option>
+                                <option value="Share Tech Mono">Share Tech Mono</option>
+                                <option value="B612 Mono">B612 Mono</option>
+                            </optgroup>
+                            <optgroup label="Display & Decorative">
+                                <option value="Lobster">Lobster</option>
+                                <option value="Dancing Script">Dancing Script</option>
+                                <option value="Pacifico">Pacifico</option>
+                                <option value="Righteous">Righteous</option>
+                                <option value="Comfortaa">Comfortaa</option>
+                                <option value="Fredoka One">Fredoka One</option>
+                                <option value="Anton">Anton</option>
+                                <option value="Bebas Neue">Bebas Neue</option>
+                                <option value="Oswald">Oswald</option>
+                                <option value="Bangers">Bangers</option>
+                                <option value="Kalam">Kalam</option>
+                                <option value="Caveat">Caveat</option>
+                                <option value="Satisfy">Satisfy</option>
+                                <option value="Great Vibes">Great Vibes</option>
+                                <option value="Indie Flower">Indie Flower</option>
+                                <option value="Shadows Into Light">Shadows Into Light</option>
+                                <option value="Amatic SC">Amatic SC</option>
+                                <option value="Permanent Marker">Permanent Marker</option>
+                                <option value="Chakra Petch">Chakra Petch</option>
+                                <option value="Orbitron">Orbitron</option>
+                            </optgroup>
+                            <optgroup label="System Fonts">
+                                <option value="Arial">Arial</option>
+                                <option value="Helvetica">Helvetica</option>
+                                <option value="Times New Roman">Times New Roman</option>
+                                <option value="Times">Times</option>
+                                <option value="Courier New">Courier New</option>
+                                <option value="Courier">Courier</option>
+                                <option value="Verdana">Verdana</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Palatino">Palatino</option>
+                                <option value="Garamond">Garamond</option>
+                                <option value="Bookman">Bookman</option>
+                                <option value="Tahoma">Tahoma</option>
+                                <option value="Trebuchet MS">Trebuchet MS</option>
+                                <option value="Arial Black">Arial Black</option>
+                                <option value="Impact">Impact</option>
+                            </optgroup>
+                            <optgroup label="Unique & Specialty">
+                                <option value="Press Start 2P">Press Start 2P</option>
+                                <option value="Creepster">Creepster</option>
+                                <option value="Bungee">Bungee</option>
+                                <option value="Monoton">Monoton</option>
+                                <option value="Rubik Glitch">Rubik Glitch</option>
+                                <option value="VT323">VT323</option>
+                                <option value="Pixelify Sans">Pixelify Sans</option>
+                                <option value="Silkscreen">Silkscreen</option>
+                                <option value="Major Mono Display">Major Mono Display</option>
+                                <option value="Griffy">Griffy</option>
+                                <option value="Nosifer">Nosifer</option>
+                                <option value="Creepster Halloween">Creepster Halloween</option>
+                                <option value="Butcherman">Butcherman</option>
+                                <option value="Metal Mania">Metal Mania</option>
+                                <option value="Jolly Lodger">Jolly Lodger</option>
+                            </optgroup>
+                        </select>
+                        <small class="setting-description">
+                            choose your preferred font for the entire app
+                        </small>
+                    </div>
+                    <div class="setting-group">
+                        <label for="mascotSelect">mascot character</label>
+                        <select id="mascotSelect" class="setting-select">
+                            <option value="chillian">chillian (friendly porcupine)</option>
+                            <option value="oldgrumps">old grumps (grumpy porcupine with sunglasses)</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="animationsToggle" checked>
+                            <span class="checkbox-custom"></span>
+                            enable animations
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h4>ai assistant</h4>
+                    <div class="setting-group">
+                        <div id="aiStatus" class="ai-status">
+                            <span class="status-indicator online"></span>
+                            <span class="status-text">ready to use</span>
+                        </div>
+                        <small class="setting-description">
+                            ai features are powered by leading ai models via secure server proxy
+                        </small>
+                    </div>
+                    <div class="setting-group">
+                        <label for="aiModelSelect">ai model</label>
+                        <select id="aiModelSelect" class="setting-select">
+                            <option value="meituan/longcat-flash-chat:free" selected>longcat flash (free)</option>
+                            <option value="deepseek/deepseek-chat-v3.1:free">deepseek v3 (free)</option>
+                            <option value="qwen/qwen3-30b-a3b:free">qwen3 30b (free)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h4>sync & storage</h4>
+                    <div class="setting-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="driveSync">
+                            <span class="checkbox-custom"></span>
+                            sync with google drive
+                        </label>
+                        <small class="setting-description">
+                            automatically sync your notes, folders, and settings to your personal google drive
+                        </small>
+                    </div>
+                    <div class="setting-group">
+                        <button id="connectDriveBtn" class="setting-btn">connect to google drive</button>
+                        <button id="disconnectDriveBtn" class="setting-btn" style="display: none;">disconnect google drive</button>
+                        <small class="setting-description">
+                            one-click setup - no technical knowledge required
+                        </small>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h4>productivity</h4>
+                    <div class="setting-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="autoSaveToggle" checked>
+                            <span class="checkbox-custom"></span>
+                            auto-save notes while typing
+                        </label>
+                    </div>
+                    <div class="setting-group">
+                        <label for="autoSaveDelay">auto-save delay (seconds)</label>
+                        <input type="number" id="autoSaveDelay" min="1" max="10" value="3" class="setting-input">
+                    </div>
+                    <div class="setting-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="spellCheckToggle" checked>
+                            <span class="checkbox-custom"></span>
+                            enable spell check
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-actions">
+                    <button id="resetSettingsBtn" class="reset-btn">reset to defaults</button>
+                    <button id="saveSettingsBtn" class="save-btn">save settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- No longer need Google APIs - using only GIS and fetch -->
+    <!-- Google Identity Services - Load synchronously for better reliability -->
+    <script>
+        // Load Google Identity Services with better error handling
+        (function() {
+            console.log('Starting Google Identity Services script loading...');
+
+            const script = document.createElement('script');
+            script.src = 'https://accounts.google.com/gsi/client';
+            script.async = false; // Load synchronously for reliability
+
+            script.onload = function() {
+                console.log('Google Identity Services script loaded successfully');
+                if (typeof gisLoaded === 'function') {
+                    gisLoaded();
+                } else {
+                    console.warn('gisLoaded function not available yet, will be called when script.js loads');
+                }
+            };
+
+            script.onerror = function(error) {
+                console.error('Google Identity Services script failed to load:', error);
+                console.error('Possible causes:');
+                console.error('1. Network connectivity issues');
+                console.error('2. Content Security Policy blocking the script');
+                console.error('3. Domain not authorized in Google OAuth settings');
+
+                if (typeof gisLoadError === 'function') {
+                    gisLoadError(error);
+                }
+            };
+
+            script.ontimeout = function() {
+                console.error('Google Identity Services script timed out');
+            };
+
+            // Set timeout for loading
+            script.timeout = 10000; // 10 seconds
+
+            document.head.appendChild(script);
+            console.log('Google Identity Services script tag added to head');
+        })();
+    </script>
+    <script src="drive-service.js"></script>
+    <script src="auth.js"></script>
+    <script src="ai-service.js"></script>
+    <script src="settings.js"></script>
+    <script src="rich-text-editor.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
