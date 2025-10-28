@@ -1,6 +1,8 @@
 # Chillquill Intro
 This is **chillquill**, the chill note taking app for you. Make thorough, organized notes in a quirky interface with help from AI in enhancing your notes, creating quizzes, and answering any questions you may have.
 
+*Note: This repository only contains the frontend. The backend was not included for security reasons. Thank you for your understanding!* 
+
 ### Featured Features
 Our favorite feature is the mascot switch in the settings menu, where you can change from casual and friendly **Chillian** to grumpy but still helpful **Old Grumps**, whose responses are much more fun to read.
 
