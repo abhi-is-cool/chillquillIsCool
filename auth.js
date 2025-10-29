@@ -210,7 +210,7 @@ class ChillQuillAuth {
 
                 <div class="cta-section">
                     <h2>ready to get started?</h2>
-                    <p>join thousands of writers who've found their flow with chillquill</p>
+                    <p>join the dozens of writers who've found their flow with chillquill</p>
                     
                     <div class="auth-buttons">
                         <button id="signInWithGoogle" class="auth-btn google-btn">
@@ -239,7 +239,7 @@ class ChillQuillAuth {
                     </div>
                     
                     <div class="auth-footer">
-                        <p>your data stays private • works completely offline • no ads ever</p>
+                        <p>always free • works completely offline • no ads ever</p>
                         <div class="auth-links">
                             <a href="privacy.html" target="_blank">privacy policy</a>
                             <span class="auth-separator">•</span>
