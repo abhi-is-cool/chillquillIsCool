@@ -15,7 +15,7 @@ The most useful feature is probably the google drive sync, which we are still in
 
 **Creating and Deleting Notes**: You can create notes by clicking the "Quill Something" button and delete them by hovering over them and clicking delete. To delete them permanently, go to trash and permanently delete them.
 
-**Changing Settings**: You can edit your settings by clicking the "Settings" button. _**Be sure to scroll down and click "Save Settings"!**_
+**Changing Settings**: You can edit your settings by clicking the "Settings" button. _**Be sure to scroll down and click "Save Settings"!**_ Settings can be reset to defaults by clicking the "Reset to Defaults" button.
 
 ## Ready to Start Quillin'?
 Go to [chillquill.abhidonepudi.com](https://chillquill.abhidonepudi.com) to get started.
