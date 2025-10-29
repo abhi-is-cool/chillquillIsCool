@@ -4,7 +4,7 @@ This is **chillquill**, the chill note taking app for you. Make thorough, organi
 *Note: This repository only contains the frontend. The backend was not included for security reasons. Thank you for your understanding!* 
 
 ### Featured Features
-Our favorite feature is the mascot switch in the settings menu, where you can change from casual and friendly **Chillian** to grumpy but still helpful **Old Grumps** (Frankly, his responses are much more fun to read.
+Our favorite feature is the mascot switch in the settings menu, where you can change from casual and friendly **Chillian** to grumpy but still helpful **Old Grumps** (Frankly, his responses are much more fun to read).
 
 Another fun feature is the theme changing, which can help you personalize your experience on the app. We hope to add folder color changes soon, after we work out some bugs.
 
