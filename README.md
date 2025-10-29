@@ -18,4 +18,4 @@ The most useful feature is probably the google drive sync, which we are still in
 **Changing Settings**: You can edit your settings by clicking the "Settings" button. _**Be sure to scroll down and click "Save Settings"!**_ Settings can be reset to defaults by clicking the "Reset to Defaults" button.
 
 ## Ready to Start Quillin'?
-Go to [chillquill.abhidonepudi.com](https://chillquill.abhidonepudi.com) to get started.
+Although chillquill can't do your homework for you (yet), you can go to [chillquill.abhidonepudi.com](https://chillquill.abhidonepudi.com) to get started with making your notes more fun.
